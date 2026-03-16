@@ -1,7 +1,7 @@
 import '@xyflow/react/dist/style.css'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { ClerkProvider } from '@clerk/clerk-react'
+import { ClerkProvider } from '@clerk/react'
 import App from '@/App'
 import '@/index.css'
 

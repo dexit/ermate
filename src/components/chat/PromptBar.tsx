@@ -5,7 +5,7 @@ import {
 } from '@/components/ui/tooltip'
 import { useSchemaPrompt } from '@/hooks/useSchemaPrompt'
 import { useSchemaStore } from '@/hooks/useSchemaStore'
-import { SignInButton, useUser } from '@clerk/clerk-react'
+import { SignInButton, useUser } from '@clerk/react'
 import { LoaderIcon, SendIcon, SparklesIcon, WifiOffIcon } from 'lucide-react'
 import {
   useCallback,
