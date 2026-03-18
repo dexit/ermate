@@ -1,4 +1,4 @@
-[![Tests](https://github.com/kkomelin/ermate/actions/workflows/test.yml/badge.svg)](https://github.com/kkomelin/ermate/actions/workflows/test.yml)
+[![CI](https://github.com/kkomelin/ermate/actions/workflows/ci.yml/badge.svg)](https://github.com/kkomelin/ermate/actions/workflows/ci.yml)
 [![Deployment Status](https://img.shields.io/badge/deployment-live-brightgreen)](https://ermate.app)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
