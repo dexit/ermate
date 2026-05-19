@@ -48,10 +48,12 @@ export default defineConfig({
         display: 'standalone',
       },
       workbox: {
-        navigateFallback: '/',
+        navigateFallback: '/index.html',
         globPatterns: ['**/*.{css,js,html,svg,png,ico,txt,woff2}'],
+        navigateFallbackDenylist: [/^\/api/],
         cleanupOutdatedCaches: true,
         clientsClaim: true,
+        skipWaiting: true,
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
       },
       devOptions: {

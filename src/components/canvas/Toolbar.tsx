@@ -3,6 +3,7 @@ import { ImportSqlDialog } from '@/components/panels/ImportSqlDialog'
 import { LoadDialog } from '@/components/panels/LoadDialog'
 import { AIProvidersModal } from '@/components/modals/AIProvidersModal'
 import { ImportJsonDialog } from '@/components/modals/ImportJsonDialog'
+import { CodePreviewDialog } from '@/components/modals/CodePreviewDialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -46,11 +47,16 @@ import {
   Undo2Icon,
   UploadIcon,
   XIcon,
+  CodeIcon,
 } from 'lucide-react'
 import { useCallback, useRef, useState } from 'react'
 import { toast } from 'sonner'
 
-export function Toolbar() {
+interface ToolbarProps {
+  onCodeGeneratorToggle?: () => void
+}
+
+export function Toolbar({ onCodeGeneratorToggle }: ToolbarProps) {
   const addTable = useSchemaStore((s) => s.addTable)
   const schemaName = useSchemaStore((s) => s.schemaName)
   const setSchemaName = useSchemaStore((s) => s.setSchemaName)
@@ -71,6 +77,7 @@ export function Toolbar() {
   const [exportSqlOpen, setExportSqlOpen] = useState(false)
   const [aiProvidersOpen, setAiProvidersOpen] = useState(false)
   const [importJsonOpen, setImportJsonOpen] = useState(false)
+  const [codePreviewOpen, setCodePreviewOpen] = useState(false)
   const [pendingSqlFile, setPendingSqlFile] = useState<File | null>(null)
   const [editing, setEditing] = useState(false)
   const [editValue, setEditValue] = useState('')
@@ -224,6 +231,10 @@ export function Toolbar() {
                 <DropdownMenuItem onClick={handleExportSQL}>
                   SQL
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setCodePreviewOpen(true)}>
+                  <CodeIcon className="size-3.5" />
+                  View Code
+                </DropdownMenuItem>
               </DropdownMenuSubContent>
             </DropdownMenuSub>
 
@@ -255,6 +266,11 @@ export function Toolbar() {
             <DropdownMenuItem onClick={() => setAiProvidersOpen(true)}>
               <Sparkles className="size-3.5" />
               AI Providers
+            </DropdownMenuItem>
+
+            <DropdownMenuItem onClick={onCodeGeneratorToggle}>
+              <CodeIcon className="size-3.5" />
+              Code Generator
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -415,6 +431,11 @@ export function Toolbar() {
       <ImportJsonDialog
         open={importJsonOpen}
         onOpenChange={setImportJsonOpen}
+      />
+      <CodePreviewDialog
+        open={codePreviewOpen}
+        onOpenChange={setCodePreviewOpen}
+        onOpenPanel={onCodeGeneratorToggle}
       />
     </>
   )
