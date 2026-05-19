@@ -3,6 +3,8 @@ import { Button } from '@/components/ui/button'
 import { CodeHighlighter } from '@/components/CodeHighlighter'
 import { useCodeGenerator } from '@/hooks/useCodeGenerator'
 import { ChevronRightIcon, ChevronLeftIcon } from 'lucide-react'
+import { useSchemaStore } from '@/hooks/useSchemaStore'
+import { downloadLaravelProject } from '@/services/phpProjectGenerator'
 import type { CodeLanguage } from '@/services/codeGenerator'
 
 interface CodeGeneratorPanelProps {
@@ -25,6 +27,7 @@ export function CodeGeneratorPanel({
 }: CodeGeneratorPanelProps) {
   const [activeTab, setActiveTab] = useState<CodeLanguage>('sql')
   const { generatedCode, hasCode } = useCodeGenerator()
+  const schema = useSchemaStore((s) => s.schema)
 
   if (!isOpen) {
     return (
@@ -71,6 +74,12 @@ export function CodeGeneratorPanel({
                 code={generatedCode[activeTab].code}
                 language={generatedCode[activeTab].language}
                 fileName={generatedCode[activeTab].fileName}
+                onDownloadZip={
+                  activeTab === 'laravel'
+                    ? async () =>
+                        downloadLaravelProject(schema.tables, 'laravel-app')
+                    : undefined
+                }
               />
             )}
           </div>
