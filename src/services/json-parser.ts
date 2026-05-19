@@ -2,12 +2,13 @@ import type { Column, Table } from '@/types/schema'
 
 export type ColumnType = 'string' | 'number' | 'boolean' | 'date' | 'text'
 
-interface ParsedColumn extends Omit<Column, 'type'> {
+export interface ParsedColumn extends Omit<Column, 'type'> {
   type: ColumnType
 }
 
-interface ParsedTable extends Omit<Table, 'columns'> {
+export interface ParsedTable extends Omit<Table, 'columns' | 'position'> {
   columns: ParsedColumn[]
+  rows?: number
 }
 
 /**
@@ -104,11 +105,7 @@ export function parseJsonToTable(
       id: `col_${Date.now()}_${index}`,
       name,
       type: detectColumnType(columnData.get(name) || []),
-      isPrimaryKey: index === 0, // First column as primary key by default
-      isNullable: true,
-      defaultValue: null,
-      comment: '',
-      constraints: [],
+      constraints: index === 0 ? [] : [],
     })
   )
 
@@ -117,7 +114,6 @@ export function parseJsonToTable(
     name: tableName,
     columns,
     rows: records.length,
-    comment: `Imported from JSON on ${new Date().toLocaleString()}`,
   }
 }
 
@@ -158,7 +154,7 @@ export function flattenJson(
  * Parse JSON string or array and convert to table schema
  */
 export function parseJsonPayload(
-  payload: string | unknown,
+  payload: string | unknown[],
   tableName?: string
 ): ParsedTable {
   let data: unknown
@@ -191,5 +187,5 @@ export function parseJsonPayload(
     })
   }
 
-  return parseJsonToTable(data, tableName || 'imported_table')
+  return parseJsonToTable(data as unknown[], tableName || 'imported_table')
 }
