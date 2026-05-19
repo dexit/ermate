@@ -10,8 +10,29 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { parseJsonPayload, type ParsedTable } from '@/services/json-parser'
+import {
+  parseJsonPayload,
+  type ParsedTable,
+  type ParsedColumn,
+} from '@/services/json-parser'
+import { ColumnType } from '@/types/schema'
+import type { Column } from '@/types/schema'
 import { useSchemaStore } from '@/hooks/useSchemaStore'
+
+// Map parsed column types to schema column types
+function mapColumnType(
+  parsedType: string
+): (typeof ColumnType)[keyof typeof ColumnType] {
+  const typeMap: Record<string, (typeof ColumnType)[keyof typeof ColumnType]> =
+    {
+      string: ColumnType.VARCHAR,
+      number: ColumnType.INTEGER,
+      boolean: ColumnType.BOOLEAN,
+      date: ColumnType.TIMESTAMP,
+      text: ColumnType.TEXT,
+    }
+  return typeMap[parsedType] || ColumnType.VARCHAR
+}
 
 interface ImportJsonDialogProps {
   open: boolean
@@ -22,7 +43,7 @@ export function ImportJsonDialog({
   open,
   onOpenChange,
 }: ImportJsonDialogProps) {
-  const { addTable } = useSchemaStore()
+  const { addTableWithColumns } = useSchemaStore()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [jsonText, setJsonText] = useState('')
@@ -95,7 +116,18 @@ export function ImportJsonDialog({
     }
 
     try {
-      addTable(parsedTable)
+      // Convert parsed columns to schema columns
+      const schemaColumns: Omit<Column, 'id'>[] = parsedTable.columns.map(
+        (col) => ({
+          name: col.name,
+          type: mapColumnType(col.type),
+          constraints: [],
+        })
+      )
+
+      // Use addTableWithColumns to import the parsed table with its columns
+      addTableWithColumns(parsedTable.name, { x: 100, y: 100 }, schemaColumns)
+
       setError('')
       setJsonText('')
       setTableName('')
@@ -248,18 +280,13 @@ export function ImportJsonDialog({
                 Detected Columns:
               </h4>
               <div className="max-h-24 space-y-1 overflow-y-auto">
-                {parsedTable.columns.map((col) => (
+                {parsedTable.columns.map((col: ParsedColumn) => (
                   <div
                     key={col.id}
                     className="bg-background flex items-center justify-between rounded px-2 py-1 text-xs"
                   >
                     <span>
                       <span className="font-mono">{col.name}</span>
-                      {col.isPrimaryKey && (
-                        <span className="bg-primary text-primary-foreground ml-2 rounded px-1.5 text-xs">
-                          PK
-                        </span>
-                      )}
                     </span>
                     <span className="text-muted-foreground text-xs">
                       {col.type}
