@@ -10,6 +10,7 @@ interface CodeHighlighterProps {
   language: string
   fileName?: string
   className?: string
+  onDownloadZip?: () => Promise<void>
 }
 
 export function CodeHighlighter({
@@ -17,8 +18,10 @@ export function CodeHighlighter({
   language,
   fileName = 'code',
   className = '',
+  onDownloadZip,
 }: CodeHighlighterProps) {
   const [copied, setCopied] = useState(false)
+  const [downloading, setDownloading] = useState(false)
 
   const handleCopy = async () => {
     try {
@@ -40,6 +43,21 @@ export function CodeHighlighter({
     element.click()
     document.body.removeChild(element)
     toast.success('Downloaded')
+  }
+
+  const handleDownloadZip = async () => {
+    if (!onDownloadZip) return
+
+    try {
+      setDownloading(true)
+      await onDownloadZip()
+      toast.success('Project downloaded as ZIP')
+    } catch (error) {
+      toast.error('Failed to download project')
+      console.error(error)
+    } finally {
+      setDownloading(false)
+    }
   }
 
   return (
@@ -67,6 +85,20 @@ export function CodeHighlighter({
           >
             <DownloadIcon className="h-4 w-4" />
           </Button>
+          {onDownloadZip && (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={handleDownloadZip}
+              disabled={downloading}
+              className="h-8 w-8 p-0"
+              title="Download as ZIP project"
+            >
+              <DownloadIcon
+                className={`h-4 w-4 ${downloading ? 'animate-spin' : ''}`}
+              />
+            </Button>
+          )}
         </div>
       </div>
       <div className="border-border bg-background overflow-auto rounded border">
