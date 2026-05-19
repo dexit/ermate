@@ -1,6 +1,8 @@
 import { ExportSqlDialog } from '@/components/panels/ExportSqlDialog'
 import { ImportSqlDialog } from '@/components/panels/ImportSqlDialog'
 import { LoadDialog } from '@/components/panels/LoadDialog'
+import { AIProvidersModal } from '@/components/modals/AIProvidersModal'
+import { ImportJsonDialog } from '@/components/modals/ImportJsonDialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -39,6 +41,7 @@ import {
   Redo2Icon,
   Share2Icon,
   ShieldCheckIcon,
+  Sparkles,
   SquarePlusIcon,
   Undo2Icon,
   UploadIcon,
@@ -66,6 +69,8 @@ export function Toolbar() {
   const [loadOpen, setLoadOpen] = useState(false)
   const [importSqlOpen, setImportSqlOpen] = useState(false)
   const [exportSqlOpen, setExportSqlOpen] = useState(false)
+  const [aiProvidersOpen, setAiProvidersOpen] = useState(false)
+  const [importJsonOpen, setImportJsonOpen] = useState(false)
   const [pendingSqlFile, setPendingSqlFile] = useState<File | null>(null)
   const [editing, setEditing] = useState(false)
   const [editValue, setEditValue] = useState('')
@@ -231,10 +236,13 @@ export function Toolbar() {
                 <DropdownMenuItem
                   onClick={() => jsonFileInputRef.current?.click()}
                 >
-                  JSON
+                  Schema (JSON)
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setImportJsonOpen(true)}>
+                  Table from JSON
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleImportSQLClick}>
-                  SQL
+                  Schema (SQL)
                 </DropdownMenuItem>
               </DropdownMenuSubContent>
             </DropdownMenuSub>
@@ -242,6 +250,11 @@ export function Toolbar() {
             <DropdownMenuItem onClick={handleShare}>
               <Share2Icon className="size-3.5" />
               Share
+            </DropdownMenuItem>
+
+            <DropdownMenuItem onClick={() => setAiProvidersOpen(true)}>
+              <Sparkles className="size-3.5" />
+              AI Providers
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -394,6 +407,14 @@ export function Toolbar() {
         open={exportSqlOpen}
         onOpenChange={setExportSqlOpen}
         onConfirm={handleExportSqlConfirm}
+      />
+      <AIProvidersModal
+        open={aiProvidersOpen}
+        onOpenChange={setAiProvidersOpen}
+      />
+      <ImportJsonDialog
+        open={importJsonOpen}
+        onOpenChange={setImportJsonOpen}
       />
     </>
   )
